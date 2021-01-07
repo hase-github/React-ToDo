@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import "./styles.css";
+import { InputTodo } from "./components/InputTodo";
+import { IncompleteTodos } from "./components/IncompleteTodos";
+import { CompleteTodos } from "./components/CompleteTodos";
 
 export const App = () => {
   const [toDoText, setTodoText] = useState("");
@@ -48,49 +51,21 @@ export const App = () => {
 
   return (
     <>
-      <div className="input-area">
-        <input
-          placeholder="TODOを入力"
-          value={toDoText}
-          onChange={onChangeToDoText}
-        />
-        <button onClick={onClickAdd}>追加</button>
-      </div>
-      <div className="incomplete-area">
-        <p className="title">未完了のToDo</p>
-        <ul>
-          {incompleteToDos.map((todo, index) => {
-            return (
-              <div key={todo} className="list-row">
-                {
-                  //map関数などのループを使う場合には、keyを設定する。
-                  //再レンダリング時に仮想DOMの差分を取るのに使われる。
-                }
-                <li>{todo}</li>
-                <button onClick={() => onClickComplete(index)}>完了</button>
-                <button onClick={() => onClickDelete(index)}>削除</button>
-                {/*　↑ここで関数に引数indexを渡すときは、
-                アロー関数を使って新たな関数とする必要がある。
-                （そうでないと、リロードした時点で関数が動いてしまう。）
-                */}
-              </div>
-            );
-          })}
-        </ul>
-      </div>
-      <div className="complete-area">
-        <p className="title">未完了のToDo</p>
-        <ul>
-          {completeToDos.map((todo, index) => {
-            return (
-              <div key={todo} className="list-row">
-                <li>{todo}</li>
-                <button onClick={() => onClickBack(index)}>戻す</button>
-              </div>
-            );
-          })}
-        </ul>
-      </div>
+      <InputTodo
+        toDoText={toDoText}
+        onChangeToDoText={onChangeToDoText}
+        onClickAdd={onClickAdd}
+        disabled={incompleteToDos.length >= 5}
+      />
+      {incompleteToDos.length >= 5 && (
+        <p style={{ color: "red" }}>登録できるTodoは５個までです。</p>
+      )}
+      <IncompleteTodos
+        incompleteToDos={incompleteToDos}
+        onClickComplete={onClickComplete}
+        onClickDelete={onClickDelete}
+      />
+      <CompleteTodos completeToDos={completeToDos} onClickBack={onClickBack} />
     </>
   );
 };
